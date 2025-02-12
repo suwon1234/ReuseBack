@@ -1,0 +1,37 @@
+version: "3.7"
+services:
+  # 클러스터 상태 관리, 리더 선출
+  zookeeper:
+    image: "confluentinc/cp-zookeeper:latest"
+    environment:
+      # Zookeeper가 클라이언트(예: Kafka Broker)와 통신하는 포트
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  # 메세지 브로커, 메세지 저장하고 관리
+  kafka:
+    image: "confluentinc/cp-kafka:latest"
+    depends_on:
+      - zookeeper
+    # 시그니처 포트. 변경가능함
+    ports:
+      - "9092:9092"
+    environment:
+      # Kafka 브로커(서버)마다 고유한 ID를 설정
+      # 여러 개의 Kafka 브로커를 실행할 경우, 각 브로커마다 다른 ID를 설정
+      # 브로커 ID로 1로 설정
+      KAFKA_BROKER_ID: 1
+
+      # Kafka가 Zookeeper와 연결할 주소를 설정
+      # Docker Compose 네트워크 내에서 Zookeeper 컨테이너를 찾는 주소
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      # Kafka가 클라이언트(Producer, Consumer)와 통신할 수 있도록 외부에 공개하는 주소
+      # PLAINTEXT: 암호화되지 않은 통신 방식 (기본 프로토콜)
+      # localhost:9092: Kafka가 클라이언트에게 노출하는 호스트와 포트
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+
+      # Consumer의 오프셋(Offset)을 저장하는 전용 토픽을 사용
+      # Offset을 저장하는 토픽의 복제본(replica) 개수를 설정
+      # 값이 1이면 단일 브로커에서만 오프셋을 저장하므로, 브로커 장애 시 데이터 손실 위험이 있음.
+      # 클러스터 환경에서는 최소 2 또는 3 이상으로 설정하는 것이 좋음
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1

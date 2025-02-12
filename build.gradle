@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.0" // BOM 추가
+    }
+}
+
+dependencies {
+    // 편의성 도구 devtool, lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // 스프링부트에서 지원하는 카프카(브로커 및 기타 일반적 용도)
+    // 실시간 데이터 스트리밍 처리용도
+    implementation 'org.apache.kafka:kafka-streams'
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+    // 스프링 시큐리티
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-crypto'
+
+    // AWS SDK 및 S3 클라이언트
+    implementation platform('software.amazon.awssdk:bom:2.20.147') // AWS SDK BOM -> 버전 관리
+    implementation 'software.amazon.awssdk:s3' // S3 클라이언트
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.4.4'
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // 파일 유효성 검증에 사용
+    // 스프링 부트 aws 연동
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // 파일 유효성 검증
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // JWT 처리
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+    // MySQL & JPA
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // 유레카 클라이언트
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Spring MVC (Web)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Actuator (모니터링)
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // 테스트 관련 라이브러리
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
