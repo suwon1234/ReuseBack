@@ -32,7 +32,7 @@ jobs:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: '17'
 
-      # application.yml 동적 생성
+      # application.yml 동적 생성 제발되라라
       # 소스 코드내에 위치 (덮어쓰기?, 신규작성?)
       # RDS 세팅된 이후 진행
       # 현재는 skip
