@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 /**
  * 제품 테이블
  * 더미 데이터 추가
@@ -31,6 +33,7 @@ public class ProductEntity {
     private String description;
     private String dtype;
     private String email;
+
     // 제품, 좋아요, 즐겨찾기, ....
 //    @Builder
 //    public ProductEntity(String pdtId, String pdtName, Integer pdtPrice, Integer pdtQuantity) {

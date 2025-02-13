@@ -1,6 +1,8 @@
 package com.example.msasbproducts.service;
 
 import com.example.msasbproducts.dto.ProductDetailDto;
+import com.example.msasbproducts.entity.UploadEntity;
+import com.example.msasbproducts.repository.UploadRepository;
 import org.example.msasbproducts.dto.ProductDto;
 import com.example.msasbproducts.dto.ShoppingCartReqDto;
 import com.example.msasbproducts.entity.CartEntity;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 //ㅁㄴㅇㅁㅁ
 @Service
 public class ProductsService {
+    @Autowired
+    private UploadRepository uploadRepository;
     @Autowired
     private ProductsRepository productsRepository;
     @Autowired
@@ -126,20 +130,32 @@ public class ProductsService {
 
     }
     @Transactional
-    public List<String> uploadImages(List<MultipartFile> images) {
+    public List<String> uploadImages(String email, List<MultipartFile> images) {
         try {
+            List<String> imageUrls = new ArrayList<>();
+
             if (images != null && !images.isEmpty()) {
-                return fileUploadService.submitFiles(images);  // 이미지 파일 업로드 후 URL 리스트 반환
+                // 이미지 업로드 후 URL 리스트 얻기
+                imageUrls = fileUploadService.submitFiles(images);
+
+                // URL 리스트와 이메일을 기반으로 UploadEntity 객체를 저장
+                for (String imageUrl : imageUrls) {
+                    UploadEntity uploadEntity = new UploadEntity(email, Collections.singletonList(imageUrl));
+                    uploadRepository.save(uploadEntity); // 엔티티 저장
+                }
             }
-            return new ArrayList<>();  // 이미지가 없으면 빈 리스트 반환
+
+            return imageUrls;  // 업로드된 이미지 URL 반환
         } catch (Exception e) {
             throw new RuntimeException("이미지 업로드 실패: " + e.getMessage());
         }
     }
 
 
+
     @Transactional
     public void registerProductInfo(ProductDetailDto productDetailDto) {
+
         try {
             // 상품 엔티티 생성
             ProductEntity productEntity = ProductEntity.builder()
@@ -157,5 +173,31 @@ public class ProductsService {
             throw new RuntimeException("상품 정보 등록 실패: " + e.getMessage());
         }
     }
+
+
+    @Transactional
+    public boolean deleteProductInfo(Integer productId, String email) {
+        try {
+            // 상품 조회
+            Optional<ProductEntity> optionalProductEntity = productsRepository.findById(productId);
+
+            if (optionalProductEntity.isPresent()) {
+                ProductEntity productEntity = optionalProductEntity.get();
+
+                // 상품이 특정 사용자에게 속한 것인지 확인 (여기서 이메일을 체크)
+                if (productEntity.getEmail().equals(email)) {
+                    productsRepository.deleteById(productId);  // 상품 삭제
+                    return true;
+                } else {
+                    throw new RuntimeException("이메일이 일치하지 않아 삭제할 수 없습니다.");
+                }
+            } else {
+                return false; // 상품이 존재하지 않으면 삭제하지 않음
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("상품 삭제 실패: " + e.getMessage());
+        }
+    }
+
 
 }

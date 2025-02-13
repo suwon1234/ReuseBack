@@ -12,11 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class UploadDto {
-
+    private String email;
     private List<String> imageUrls;
 
     @Builder
-    public UploadDto(List<String> imageUrls){
+    public UploadDto(List<String> imageUrls, String email) {
         this.imageUrls = imageUrls;
+        this.email = email;
     }
 }

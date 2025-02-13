@@ -1,9 +1,13 @@
 package com.example.msasbproducts.controller;
 
 import com.example.msasbproducts.dto.ProductDetailDto;
+import com.example.msasbproducts.dto.ProductReqDto;
 import com.example.msasbproducts.dto.ShoppingCartReqDto;
 import com.example.msasbproducts.dto.UploadDto;
+import com.example.msasbproducts.entity.UploadEntity;
 import com.example.msasbproducts.kafka.KafkaProducer;
+import com.example.msasbproducts.kafka.TestKafProducer;
+import com.example.msasbproducts.repository.UploadRepository;
 import com.example.msasbproducts.service.FileUpoadService;
 import com.example.msasbproducts.service.ProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +48,8 @@ public class ProductsController {
             productsService.registerProductInfo(productDetailDto);
 
             // Kafka 메시지 전송
-            kafkaProducer.sendMsg("msa-sb-products-register", productDetailDto.toString());
+            String topic = "msa-sb-products-register";  // 적절한 Kafka 토픽 설정
+            TestKafProducer.createPdt(topic, productDetailDto);
 
             return ResponseEntity.ok("상품 정보가 성공적으로 등록되었습니다.");
         } catch (Exception e) {
@@ -52,15 +57,43 @@ public class ProductsController {
         }
     }
 
+
+    // 상품 삭제
+    @DeleteMapping("/delete/{productId}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Integer productId, @RequestHeader("X-Auth-User") String email) {
+        try {
+            // 상품 삭제 처리
+            boolean isDeleted = productsService.deleteProductInfo(productId,email);
+
+            if (isDeleted) {
+                // Kafka 메시지 전송
+                String topic = "msa-sb-products-delete";  // Kafka 토픽 설정
+                ProductReqDto productReqDto = ProductReqDto.builder()
+                        .email(email)
+                        .ptId(productId)
+                        .build();
+                TestKafProducer.deletePdt(topic, productReqDto);  // Kafka producer 호출
+
+                return ResponseEntity.ok("상품이 성공적으로 삭제되었습니다.");
+            } else {
+                return ResponseEntity.status(404).body("상품을 찾을 수 없습니다.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("상품 삭제 실패");
+        }
+    }
+
+
     @PostMapping("/uploadImages")
-    public ResponseEntity<UploadDto> uploadImages(@RequestParam("images") List<MultipartFile> images) {
+    public ResponseEntity<UploadDto> uploadImages(@RequestHeader("X-Auth-User") String email,@RequestParam("images") List<MultipartFile> images) {
         try {
             // 이미지 파일을 S3에 업로드하고 URL 리스트 반환
-            List<String> imageUrls = fileUploadService.submitFiles(images);
+            List<String> imageUrls = productsService.uploadImages(email, images);
 
             // 반환할 DTO 생성
             UploadDto responseDto = UploadDto.builder()
                     .imageUrls(imageUrls)
+                    .email(email)
                     .build();
 
             return ResponseEntity.ok(responseDto);

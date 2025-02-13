@@ -2,6 +2,8 @@ package com.example.msasbproducts.controller;
 
 import com.example.msasbproducts.dto.WishlistDto;
 import com.example.msasbproducts.entity.WishlistEntity;
+import com.example.msasbproducts.kafka.KafkaProducer;
+import com.example.msasbproducts.kafka.TestKafProducer;
 import com.example.msasbproducts.service.WishlistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class WishlistController {
     @Autowired
     private WishlistService wishlistService;
 
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
     // 특정 이메일의 위시리스트 조회
     @GetMapping("/{email}")
     public ResponseEntity<List<WishlistDto>> getWishlist(@PathVariable String email) {
@@ -28,14 +33,32 @@ public class WishlistController {
     // 위시리스트에 항목 추가
     @PostMapping
     public ResponseEntity<WishlistDto> addWishlist(@RequestBody WishlistEntity wishlistEntity) {
-        WishlistDto addedWishlist = wishlistService.addWishlist(wishlistEntity);
-        return ResponseEntity.status(201).body(addedWishlist);  // 201 Created 상태 코드
+        try {
+            WishlistDto addedWishlist = wishlistService.addWishlist(wishlistEntity);
+
+            // Kafka 메시지 전송
+            String topic = "msa-sb-wishlist-add";  // 적절한 Kafka 토픽 설정
+            TestKafProducer.wishPdt(topic, addedWishlist);  // Kafka producer 호출
+
+            return ResponseEntity.status(201).body(addedWishlist);  // 201 Created 상태 코드
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);  // 서버 오류 발생 시 500 상태 코드
+        }
     }
 
     // 위시리스트에서 항목 제거
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeWishlist(@PathVariable Integer id) {
-        wishlistService.removeWishlist(id);
-        return ResponseEntity.noContent().build();  // 204 No Content 상태 코드
+        try {
+            wishlistService.removeWishlist(id);
+
+            // Kafka 메시지 전송
+            String topic = "msa-sb-wishlist-remove";  // 적절한 Kafka 토픽 설정
+            TestKafProducer.wishPdtDelete(topic, id);  // Kafka producer 호출
+
+            return ResponseEntity.noContent().build();  // 204 No Content 상태 코드
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();  // 서버 오류 발생 시 500 상태 코드
+        }
     }
 }

@@ -19,8 +19,9 @@ public class ProductDetailDto {
     private String description;
     private String dtype;
     private String email;
+    private List<String> imageUrls;
     @Builder
-    public ProductDetailDto(Integer ptId, Integer ptPrice, String ptName, Integer ptQuantity, String description, String dtype, String email) {
+    public ProductDetailDto(Integer ptId, Integer ptPrice, String ptName, Integer ptQuantity, String description, String dtype, String email, List<String> imageUrls) {
         this.pdtId = ptId;
         this.pdtPrice = ptPrice;
         this.pdtName = ptName;
@@ -28,5 +29,6 @@ public class ProductDetailDto {
         this.description = description;
         this.dtype = dtype;
         this.email = email;
+        this.imageUrls = imageUrls;
     }
 }
