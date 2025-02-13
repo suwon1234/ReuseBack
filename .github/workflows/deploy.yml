@@ -85,7 +85,7 @@ jobs:
           target: /home/ubuntu/server/demo
 
 
-          #추가 완료료
+          #추가 완료 수정정
       - name: Run jar in EC2
         uses: appleboy/ssh-action@v1.2.0
         with:
