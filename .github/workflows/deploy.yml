@@ -82,7 +82,7 @@ jobs:
         # SSH의 포트를 보안산 이유로 22->다른번호변경 했다면
         # PORT 설정 필요
         # 파일이 여러개면 "파일, 파일, ... "
-        # 원격 서버에 폴더도 자동 생성되는지 검토
+        # 원격 서버에 폴더도 자동 생성되는지  제발되라
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
