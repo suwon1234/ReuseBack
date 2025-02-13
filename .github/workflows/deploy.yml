@@ -36,6 +36,11 @@ jobs:
       # 소스 코드내에 위치 (덮어쓰기?, 신규작성?)
       # RDS 세팅된 이후 진행
       # 현재는 skip
+      - name: application.yml 동적 생성
+        run: |
+         mkdir -p ./src/main/resources/
+         echo "${{ secrets.PRODUCTS_APPLICATION_YML }}" > ./src/main/resources/application.yml
+         ls ./src/main/resources/
 
       # build 준비
       # chmod +x ./gradlew : 퍼미션 오류 발생시 처리
