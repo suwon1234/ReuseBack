@@ -29,7 +29,6 @@ public class ProductEntity {
     private String pdtName;
     private Integer pdtQuantity;
     private String description;
-    private String imagePath;
     private String dtype;
     private String email;
     // 제품, 좋아요, 즐겨찾기, ....

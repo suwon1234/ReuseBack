@@ -10,12 +10,11 @@ import com.example.msasbproducts.repository.ProductsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-
+//ㅁㄴㅇㅁㅁ
 @Service
 public class ProductsService {
     @Autowired
@@ -23,6 +22,8 @@ public class ProductsService {
     @Autowired
     private CartRepository cartRepository;
 
+    @Autowired
+    private FileUpoadService fileUploadService;
 
 
     public List<ProductDto> allProducts() {
@@ -44,11 +45,9 @@ public class ProductsService {
                 .ptPrice(productEntity.getPdtPrice())
                 .ptQuantity(productEntity.getPdtQuantity())
                 .description(productEntity.getDescription())
-                .imagePath(productEntity.getImagePath())
                 .dtype(productEntity.getDtype())
                 .build();
     }
-
 
 
     @Transactional
@@ -103,7 +102,6 @@ public class ProductsService {
     }
 
 
-
     @Transactional
     public void updateCartQuantity(String email, Integer pdtId, int newQuantity) {
         Optional<CartEntity> cartEntityOpt = cartRepository.findByEmailAndPdtIdIn(email, Collections.singletonList(pdtId));
@@ -127,19 +125,37 @@ public class ProductsService {
 
 
     }
+    @Transactional
+    public List<String> uploadImages(List<MultipartFile> images) {
+        try {
+            if (images != null && !images.isEmpty()) {
+                return fileUploadService.submitFiles(images);  // 이미지 파일 업로드 후 URL 리스트 반환
+            }
+            return new ArrayList<>();  // 이미지가 없으면 빈 리스트 반환
+        } catch (Exception e) {
+            throw new RuntimeException("이미지 업로드 실패: " + e.getMessage());
+        }
+    }
+
 
     @Transactional
-    public void registerProduct(ProductDetailDto productDetailDto) {
-        ProductEntity productEntity = ProductEntity.builder()
-                .pdtName(productDetailDto.getPdtName()) // 상품명
-                .pdtPrice(productDetailDto.getPdtPrice()) // 상품 가격
-                .pdtQuantity(productDetailDto.getPdtQuantity()) // 상품 수량
-                .description(productDetailDto.getDescription()) // 상품 설명
-                .imagePath(productDetailDto.getImagePath()) // 상품 이미지 경로
-                .dtype(productDetailDto.getDtype()) // 상품 종류
-                .email(productDetailDto.getEmail()) // 등록한 사람의 email
-                .build();
+    public void registerProductInfo(ProductDetailDto productDetailDto) {
+        try {
+            // 상품 엔티티 생성
+            ProductEntity productEntity = ProductEntity.builder()
+                    .pdtName(productDetailDto.getPdtName())
+                    .pdtPrice(productDetailDto.getPdtPrice())
+                    .pdtQuantity(productDetailDto.getPdtQuantity())
+                    .description(productDetailDto.getDescription())
+                    .dtype(productDetailDto.getDtype())
+                    .email(productDetailDto.getEmail())
+                    .build();
 
-        productsRepository.save(productEntity);
+            // 상품 정보 DB에 저장
+            productsRepository.save(productEntity);
+        } catch (Exception e) {
+            throw new RuntimeException("상품 정보 등록 실패: " + e.getMessage());
+        }
     }
+
 }
