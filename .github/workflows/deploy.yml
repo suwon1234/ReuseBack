@@ -34,7 +34,7 @@ jobs:
 
       # application.yml 동적 생성 제발되라라
       # 소스 코드내에 위치 (덮어쓰기?, 신규작성?)
-      # RDS 세팅된 이후 진행ㄴㄴㄴ
+      # RDS 세팅된 이후 진행ㄴㄴㄴㄴㅇㅁㄴㅇㅇ
       # 현재는 skip
       #수정완료
       - name: application.yml 동적 생성
@@ -78,11 +78,6 @@ jobs:
       # 타겟(EC2)의 특정 경로(복사될 위치), /home/ubuntu/server/demo
       - name: EC2에 jar파일 업로드
         uses: appleboy/scp-action@v0.1.7
-        # 위의 액션을 위한 파라미터
-        # SSH의 포트를 보안산 이유로 22->다른번호변경 했다면
-        # PORT 설정 필요
-        # 파일이 여러개면 "파일, 파일, ... "
-        # 원격 서버에 폴더도 자동 생성되는지  제발되라
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
