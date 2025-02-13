@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+// 수정정
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
