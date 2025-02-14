@@ -42,13 +42,18 @@ public class ProductsController {
 
     // 상품등록
     @PostMapping("/register")
-    public ResponseEntity<String> registerProduct(@RequestBody ProductDetailDto productDetailDto) {
+    public ResponseEntity<String> registerProduct(
+            @RequestHeader("X-Auth-User") String email,
+            @RequestBody ProductDetailDto productDetailDto) {
         try {
+            // email 정보를 ProductDetailDto에 설정
+            productDetailDto.setEmail(email);
+
             // 상품 등록 처리
             productsService.registerProductInfo(productDetailDto);
 
             // Kafka 메시지 전송
-            String topic = "msa-sb-products-register";  // 적절한 Kafka 토픽 설정
+            String topic = "msa-sb-products-register";  // Kafka 토픽 설정
             TestKafProducer.createPdt(topic, productDetailDto);
 
             return ResponseEntity.ok("상품 정보가 성공적으로 등록되었습니다.");
@@ -56,6 +61,7 @@ public class ProductsController {
             return ResponseEntity.status(500).body("상품 정보 등록 실패");
         }
     }
+
 
 
     // 상품 삭제

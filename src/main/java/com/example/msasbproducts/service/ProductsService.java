@@ -155,8 +155,12 @@ public class ProductsService {
 
     @Transactional
     public void registerProductInfo(ProductDetailDto productDetailDto) {
-
         try {
+            // 이메일 정보가 없는 경우 예외 발생
+            if (productDetailDto.getEmail() == null || productDetailDto.getEmail().isEmpty()) {
+                throw new IllegalArgumentException("이메일 정보가 필요합니다.");
+            }
+
             // 상품 엔티티 생성
             ProductEntity productEntity = ProductEntity.builder()
                     .pdtName(productDetailDto.getPdtName())
@@ -164,7 +168,7 @@ public class ProductsService {
                     .pdtQuantity(productDetailDto.getPdtQuantity())
                     .description(productDetailDto.getDescription())
                     .dtype(productDetailDto.getDtype())
-                    .email(productDetailDto.getEmail())
+                    .email(productDetailDto.getEmail()) // email 필수 입력
                     .build();
 
             // 상품 정보 DB에 저장
@@ -173,6 +177,7 @@ public class ProductsService {
             throw new RuntimeException("상품 정보 등록 실패: " + e.getMessage());
         }
     }
+
 
 
     @Transactional
