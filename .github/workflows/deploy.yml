@@ -4,7 +4,7 @@ name: Deploy for ci/cd
 on:
   # 원인 : 푸시
   push:
-    # 대상 브런치
+    # 대상 브런치ㅇㅇㅇ
     branches:
       # 대상 브런치는 main(본인 브런치명)
       - master
