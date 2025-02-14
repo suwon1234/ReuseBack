@@ -10,6 +10,7 @@ import com.example.msasbproducts.kafka.TestKafProducer;
 import com.example.msasbproducts.repository.UploadRepository;
 import com.example.msasbproducts.service.FileUpoadService;
 import com.example.msasbproducts.service.ProductsService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +45,12 @@ public class ProductsController {
 public ResponseEntity<String> registerProductWithImages(
         @RequestHeader("X-Auth-User") String email,
         @RequestParam(value = "images", required = false) List<MultipartFile> images,
-        @RequestBody ProductDetailDto productDetailDto) {
+        @RequestParam("productDetail") String productDetailJson) {  // JSON 데이터를 문자열로 받음
     try {
+        // JSON String을 DTO 객체로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductDetailDto productDetailDto = objectMapper.readValue(productDetailJson, ProductDetailDto.class);
+
         // 상품 등록 (이미지 포함)
         productsService.registerProductWithImages(email, productDetailDto, images);
 

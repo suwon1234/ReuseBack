@@ -132,15 +132,14 @@ public class ProductsService {
     @Transactional
     public void registerProductWithImages(String email, ProductDetailDto productDetailDto, List<MultipartFile> images) {
         try {
-            // 이메일이 없는 경우 예외 발생
             if (email == null || email.isEmpty()) {
                 throw new IllegalArgumentException("이메일 정보가 필요합니다.");
             }
 
-            // 이미지 업로드 처리
+            // 이미지 업로드 처리 (S3 또는 다른 저장소 사용)
             List<String> imageUrls = new ArrayList<>();
             if (images != null && !images.isEmpty()) {
-                imageUrls = fileUploadService.submitFiles(images); // 업로드된 이미지 URL 가져오기
+                imageUrls = fileUploadService.submitFiles(images);
             }
 
             // 상품 엔티티 생성
@@ -150,8 +149,8 @@ public class ProductsService {
                     .pdtQuantity(productDetailDto.getPdtQuantity())
                     .description(productDetailDto.getDescription())
                     .dtype(productDetailDto.getDtype())
-                    .email(email)  // 이메일 설정
-                    .imageUrls(imageUrls)  // 업로드된 이미지 URL 저장 (필드 추가 필요)
+                    .email(email)
+                    .imageUrls(imageUrls)  // 업로드된 이미지 URL 저장 (ProductEntity에 @ElementCollection 추가 필요)
                     .build();
 
             // 상품 정보 DB 저장
