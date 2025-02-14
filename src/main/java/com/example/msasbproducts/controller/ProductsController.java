@@ -54,7 +54,7 @@ public class ProductsController {
 
             // Kafka 메시지 전송
             String topic = "msa-sb-products-register";  // Kafka 토픽 설정
-            TestKafProducer.createPdt(topic, productDetailDto);
+//            TestKafProducer.createPdt(topic, productDetailDto);
 
             return ResponseEntity.ok("상품 정보가 성공적으로 등록되었습니다.");
         } catch (Exception e) {
