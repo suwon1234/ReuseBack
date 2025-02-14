@@ -44,7 +44,7 @@ public class ProductsController {
 @PostMapping("/register")
 public ResponseEntity<String> registerProductWithImages(
         @RequestHeader("X-Auth-User") String email,
-        @RequestParam(value = "images", required = false) List<MultipartFile> images,
+//        @RequestParam(value = "images", required = false) List<MultipartFile> images,
         @RequestParam("productDetail") String productDetailJson) {  // JSON 데이터를 문자열로 받음
     try {
         // JSON String을 DTO 객체로 변환
@@ -52,7 +52,8 @@ public ResponseEntity<String> registerProductWithImages(
         ProductDetailDto productDetailDto = objectMapper.readValue(productDetailJson, ProductDetailDto.class);
 
         // 상품 등록 (이미지 포함)
-        productsService.registerProductWithImages(email, productDetailDto, images);
+//        productsService.registerProductWithImages(email, productDetailDto, images);
+        productsService.registerProductWithImages(email, productDetailDto);
 
         return ResponseEntity.ok("상품이 성공적으로 등록되었습니다.");
     } catch (Exception e) {
