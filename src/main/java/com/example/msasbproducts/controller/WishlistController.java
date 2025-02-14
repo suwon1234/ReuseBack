@@ -21,7 +21,7 @@ public class WishlistController {
     private WishlistService wishlistService;
 
     @Autowired
-    private KafkaProducer kafkaProducer;
+    private TestKafProducer testKafProducer;
 
     // 특정 이메일의 위시리스트 조회
     @GetMapping("/{email}")
@@ -38,7 +38,7 @@ public class WishlistController {
 
             // Kafka 메시지 전송
             String topic = "msa-sb-wishlist-add";  // 적절한 Kafka 토픽 설정
-            TestKafProducer.wishPdt(topic, addedWishlist);  // Kafka producer 호출
+            testKafProducer.wishPdt(topic, addedWishlist);  // Kafka producer 호출
 
             return ResponseEntity.status(201).body(addedWishlist);  // 201 Created 상태 코드
         } catch (Exception e) {
@@ -54,7 +54,7 @@ public class WishlistController {
 
             // Kafka 메시지 전송
             String topic = "msa-sb-wishlist-remove";  // 적절한 Kafka 토픽 설정
-            TestKafProducer.wishPdtDelete(topic, id);  // Kafka producer 호출
+            testKafProducer.wishPdtDelete(topic, id);  // Kafka producer 호출
 
             return ResponseEntity.noContent().build();  // 204 No Content 상태 코드
         } catch (Exception e) {

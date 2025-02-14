@@ -24,7 +24,7 @@ public class ProductsController {
     @Autowired
     private ProductsService productsService;
     @Autowired
-    private KafkaProducer kafkaProducer;
+    private TestKafProducer testKafProducer;
     @Autowired
     private FileUpoadService fileUploadService;  // 파일 업로드 서비스 추가
 
@@ -39,29 +39,21 @@ public class ProductsController {
     public ResponseEntity<ProductDetailDto> productDetail(@PathVariable Integer pdtId) {
         return ResponseEntity.ok(productsService.getProductDetailInfo(pdtId));
     }
+// 상품등록
+@PostMapping("/register")
+public ResponseEntity<String> registerProductWithImages(
+        @RequestHeader("X-Auth-User") String email,
+        @RequestParam(value = "images", required = false) List<MultipartFile> images,
+        @RequestBody ProductDetailDto productDetailDto) {
+    try {
+        // 상품 등록 (이미지 포함)
+        productsService.registerProductWithImages(email, productDetailDto, images);
 
-    // 상품등록
-    @PostMapping("/register")
-    public ResponseEntity<String> registerProduct(
-            @RequestHeader("X-Auth-User") String email,
-            @RequestBody ProductDetailDto productDetailDto) {
-        try {
-            // email 정보를 ProductDetailDto에 설정
-            productDetailDto.setEmail(email);
-
-            // 상품 등록 처리
-            productsService.registerProductInfo(productDetailDto);
-
-            // Kafka 메시지 전송
-            String topic = "msa-sb-products-register";  // Kafka 토픽 설정
-//            TestKafProducer.createPdt(topic, productDetailDto);
-
-            return ResponseEntity.ok("상품 정보가 성공적으로 등록되었습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("상품 정보 등록 실패");
-        }
+        return ResponseEntity.ok("상품이 성공적으로 등록되었습니다.");
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body("상품 등록 실패: " + e.getMessage());
     }
-
+}
 
 
     // 상품 삭제
@@ -78,7 +70,7 @@ public class ProductsController {
                         .email(email)
                         .ptId(productId)
                         .build();
-                TestKafProducer.deletePdt(topic, productReqDto);  // Kafka producer 호출
+                testKafProducer.deletePdt(topic, productReqDto);  // Kafka producer 호출
 
                 return ResponseEntity.ok("상품이 성공적으로 삭제되었습니다.");
             } else {
@@ -90,23 +82,6 @@ public class ProductsController {
     }
 
 
-    @PostMapping("/uploadImages")
-    public ResponseEntity<UploadDto> uploadImages(@RequestHeader("X-Auth-User") String email,@RequestParam("images") List<MultipartFile> images) {
-        try {
-            // 이미지 파일을 S3에 업로드하고 URL 리스트 반환
-            List<String> imageUrls = productsService.uploadImages(email, images);
-
-            // 반환할 DTO 생성
-            UploadDto responseDto = UploadDto.builder()
-                    .imageUrls(imageUrls)
-                    .email(email)
-                    .build();
-
-            return ResponseEntity.ok(responseDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
-    }
 
 
 

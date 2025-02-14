@@ -130,35 +130,17 @@ public class ProductsService {
 
     }
     @Transactional
-    public List<String> uploadImages(String email, List<MultipartFile> images) {
+    public void registerProductWithImages(String email, ProductDetailDto productDetailDto, List<MultipartFile> images) {
         try {
-            List<String> imageUrls = new ArrayList<>();
-
-            if (images != null && !images.isEmpty()) {
-                // 이미지 업로드 후 URL 리스트 얻기
-                imageUrls = fileUploadService.submitFiles(images);
-
-                // URL 리스트와 이메일을 기반으로 UploadEntity 객체를 저장
-                for (String imageUrl : imageUrls) {
-                    UploadEntity uploadEntity = new UploadEntity(email, Collections.singletonList(imageUrl));
-                    uploadRepository.save(uploadEntity); // 엔티티 저장
-                }
+            // 이메일이 없는 경우 예외 발생
+            if (email == null || email.isEmpty()) {
+                throw new IllegalArgumentException("이메일 정보가 필요합니다.");
             }
 
-            return imageUrls;  // 업로드된 이미지 URL 반환
-        } catch (Exception e) {
-            throw new RuntimeException("이미지 업로드 실패: " + e.getMessage());
-        }
-    }
-
-
-
-    @Transactional
-    public void registerProductInfo(ProductDetailDto productDetailDto) {
-        try {
-            // 이메일 정보가 없는 경우 예외 발생
-            if (productDetailDto.getEmail() == null || productDetailDto.getEmail().isEmpty()) {
-                throw new IllegalArgumentException("이메일 정보가 필요합니다.");
+            // 이미지 업로드 처리
+            List<String> imageUrls = new ArrayList<>();
+            if (images != null && !images.isEmpty()) {
+                imageUrls = fileUploadService.submitFiles(images); // 업로드된 이미지 URL 가져오기
             }
 
             // 상품 엔티티 생성
@@ -168,15 +150,24 @@ public class ProductsService {
                     .pdtQuantity(productDetailDto.getPdtQuantity())
                     .description(productDetailDto.getDescription())
                     .dtype(productDetailDto.getDtype())
-                    .email(productDetailDto.getEmail()) // email 필수 입력
+                    .email(email)  // 이메일 설정
+                    .imageUrls(imageUrls)  // 업로드된 이미지 URL 저장 (필드 추가 필요)
                     .build();
 
-            // 상품 정보 DB에 저장
+            // 상품 정보 DB 저장
             productsRepository.save(productEntity);
+
+            // 이미지 업로드 정보 저장
+            for (String imageUrl : imageUrls) {
+                UploadEntity uploadEntity = new UploadEntity(email, Collections.singletonList(imageUrl));
+                uploadRepository.save(uploadEntity);
+            }
+
         } catch (Exception e) {
-            throw new RuntimeException("상품 정보 등록 실패: " + e.getMessage());
+            throw new RuntimeException("상품 등록 중 오류 발생: " + e.getMessage());
         }
     }
+
 
 
 

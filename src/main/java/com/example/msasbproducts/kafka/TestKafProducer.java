@@ -21,25 +21,31 @@ public class TestKafProducer {
     @Autowired
     private static ObjectMapper objectMapper;
 
-    public static void createPdt(String topic, ProductDetailDto productDetailDto) throws JsonProcessingException {
+    public void createPdt(String topic, ProductDetailDto productDetailDto) throws JsonProcessingException {
         logger.info("상품 등록 메세지 전송");
-        kafkaTemplate.send(topic, objectMapper.writeValueAsString(productDetailDto));
+        kafkaTemplate.send(topic, objectMapper.writeValueAsString(SendPdtDto.builder()
+                        .email(productDetailDto.getEmail())
+                        .ptId(productDetailDto.getPdtId())
+                        .pdtName(productDetailDto.getPdtName())
+                        .price(Float.valueOf(productDetailDto.getPdtPrice()))
+                        .imageUrl(productDetailDto.getImageUrls())
+                        .build()));
         logger.info("상품 등록 메세지 전송 완료");
     }
 
-    public static void deletePdt(String topic, ProductReqDto productReqDto) throws JsonProcessingException {
+    public void deletePdt(String topic, ProductReqDto productReqDto) throws JsonProcessingException {
         logger.info("상품 삭제 메세지 전송");
         kafkaTemplate.send(topic, objectMapper.writeValueAsString(productReqDto));
         logger.info("상품 삭제 메세지 전송 완료");
     }
 
-    public static void wishPdt(String topic, WishlistDto wishlistDto) throws JsonProcessingException {
+    public void wishPdt(String topic, WishlistDto wishlistDto) throws JsonProcessingException {
         logger.info("찜 등록 메세지 전송");
         kafkaTemplate.send(topic, objectMapper.writeValueAsString(wishlistDto));
         logger.info("찜 등록 메세지 전송 완료");
     }
 
-    public static void wishPdtDelete(String topic, Integer productReqDto) throws JsonProcessingException {
+    public void wishPdtDelete(String topic, Integer productReqDto) throws JsonProcessingException {
         logger.info("찜 삭제 메세지 전송");
         kafkaTemplate.send(topic, objectMapper.writeValueAsString(productReqDto));
         logger.info("찜 삭제 메세지 전송 완료");
