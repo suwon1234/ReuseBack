@@ -45,8 +45,8 @@ public class ProductsController {
     @PostMapping("/register")
     public ResponseEntity<String> registerProductWithImages(
             @RequestHeader("X-Auth-User") String email,
-            @RequestParam(value = "images", required = false) List<MultipartFile> images,
-            @RequestParam("productDetail") String productDetailJson) {  // JSON 데이터를 문자열로 받음
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @RequestPart("productDetail") String productDetailJson) {  // JSON 데이터를 문자열로 받음
         try {
             // JSON String을 DTO 객체로 변환
             ObjectMapper objectMapper = new ObjectMapper();
