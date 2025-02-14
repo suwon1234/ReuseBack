@@ -19,7 +19,7 @@ public class ProductDetailDto {
     private String description;
     private String dtype;
     private String email;
-//    private List<String> imageUrls;
+    private List<String> imageUrls;
     @Builder
     public ProductDetailDto(Integer ptId, Integer ptPrice, String ptName, Integer ptQuantity, String description, String dtype, String email, List<String> imageUrls) {
         this.pdtId = ptId;

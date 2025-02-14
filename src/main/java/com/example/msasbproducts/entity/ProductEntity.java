@@ -33,8 +33,8 @@ public class ProductEntity {
     private String description;
     private String dtype;
     private String email;
-//    @ElementCollection
-//    private List<String> imageUrls;
+    @ElementCollection
+    private List<String> imageUrls;
 
     // 제품, 좋아요, 즐겨찾기, ....
 //    @Builder

@@ -130,18 +130,18 @@ public class ProductsService {
 
     }
     @Transactional
-    public void registerProductWithImages(String email, ProductDetailDto productDetailDto) {
+    public void registerProductWithImages(String email, ProductDetailDto productDetailDto,  List<MultipartFile> images) {
         try {
-//            List<MultipartFile> images
+//
             if (email == null || email.isEmpty()) {
                 throw new IllegalArgumentException("이메일 정보가 필요합니다.");
             }
 
             // 이미지 업로드 처리 (S3 또는 다른 저장소 사용)
-//            List<String> imageUrls = new ArrayList<>();
-//            if (images != null && !images.isEmpty()) {
-//                imageUrls = fileUploadService.submitFiles(images);
-//            }
+            List<String> imageUrls = new ArrayList<>();
+            if (images != null && !images.isEmpty()) {
+                imageUrls = fileUploadService.submitFiles(images);
+            }
 
             // 상품 엔티티 생성
             ProductEntity productEntity = ProductEntity.builder()
@@ -151,17 +151,17 @@ public class ProductsService {
                     .description(productDetailDto.getDescription())
                     .dtype(productDetailDto.getDtype())
                     .email(email)
-//                    .imageUrls(imageUrls)  // 업로드된 이미지 URL 저장 (ProductEntity에 @ElementCollection 추가 필요)
+                    .imageUrls(imageUrls)  // 업로드된 이미지 URL 저장 (ProductEntity에 @ElementCollection 추가 필요)
                     .build();
 
             // 상품 정보 DB 저장
             productsRepository.save(productEntity);
 
 //            // 이미지 업로드 정보 저장
-//            for (String imageUrl : imageUrls) {
-//                UploadEntity uploadEntity = new UploadEntity(email, Collections.singletonList(imageUrl));
-//                uploadRepository.save(uploadEntity);
-//            }
+            for (String imageUrl : imageUrls) {
+                UploadEntity uploadEntity = new UploadEntity(email, Collections.singletonList(imageUrl));
+                uploadRepository.save(uploadEntity);
+            }
 
         } catch (Exception e) {
             throw new RuntimeException("상품 등록 중 오류 발생: " + e.getMessage());
