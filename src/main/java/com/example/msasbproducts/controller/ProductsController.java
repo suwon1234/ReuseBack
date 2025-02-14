@@ -41,6 +41,7 @@ public class ProductsController {
         return ResponseEntity.ok(productsService.getProductDetailInfo(pdtId));
     }
     // 상품등록
+    // 상품등록
     @PostMapping("/register")
     public ResponseEntity<String> registerProductWithImages(
             @RequestHeader("X-Auth-User") String email,
@@ -52,13 +53,19 @@ public class ProductsController {
             ProductDetailDto productDetailDto = objectMapper.readValue(productDetailJson, ProductDetailDto.class);
 
             // 상품 등록 (이미지 포함)
-        productsService.registerProductWithImages(email, productDetailDto, images);
+            productsService.registerProductWithImages(email, productDetailDto, images);
+
+            // 상품 등록 후 Kafka 메시지 전송
+            // Kafka 메시지를 전송하는 createPdt 메서드 호출
+            String topic = "pdt-create"; // 예시 토픽 이름 (적절히 변경 필요)
+            testKafProducer.createPdt(topic, productDetailDto);  // KafkaService에 전달
 
             return ResponseEntity.ok("상품이 성공적으로 등록되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("상품 등록 실패: " + e.getMessage());
         }
     }
+
 
 
     // 상품 삭제
@@ -70,7 +77,7 @@ public class ProductsController {
 
             if (isDeleted) {
                 // Kafka 메시지 전송
-                String topic = "msa-sb-products-delete";  // Kafka 토픽 설정
+                String topic = "pdt-delete";  // Kafka 토픽 설정
                 ProductReqDto productReqDto = ProductReqDto.builder()
                         .email(email)
                         .ptId(productId)

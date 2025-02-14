@@ -37,7 +37,7 @@ public class WishlistController {
             WishlistDto addedWishlist = wishlistService.addWishlist(wishlistEntity);
 
             // Kafka 메시지 전송
-            String topic = "msa-sb-wishlist-add";  // 적절한 Kafka 토픽 설정
+            String topic = "wish-pdt";  // 적절한 Kafka 토픽 설정
             testKafProducer.wishPdt(topic, addedWishlist);  // Kafka producer 호출
 
             return ResponseEntity.status(201).body(addedWishlist);  // 201 Created 상태 코드
@@ -48,13 +48,14 @@ public class WishlistController {
 
     // 위시리스트에서 항목 제거
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeWishlist(@PathVariable Integer id) {
+    public ResponseEntity<Void> removeWishlist(@PathVariable Integer id,
+                                               @RequestHeader("X-Auth-User") String email) {  // 이메일을 헤더에서 받음
         try {
             wishlistService.removeWishlist(id);
 
             // Kafka 메시지 전송
-            String topic = "msa-sb-wishlist-remove";  // 적절한 Kafka 토픽 설정
-            testKafProducer.wishPdtDelete(topic, id);  // Kafka producer 호출
+            String topic = "wish-pdt-delete";  // 적절한 Kafka 토픽 설정
+            testKafProducer.wishPdtDelete(topic, id, email);  // 상품 ID와 이메일을 Kafka producer에 전달
 
             return ResponseEntity.noContent().build();  // 204 No Content 상태 코드
         } catch (Exception e) {
