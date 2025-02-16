@@ -130,20 +130,12 @@ public class ProductsService {
 
     }
     @Transactional
-    public void registerProductWithImages(String email, ProductDetailDto productDetailDto,  List<MultipartFile> images) {
+    public void registerProductWithImages(String email, ProductDetailDto productDetailDto, List<MultipartFile> images) {
         try {
-//
             if (email == null || email.isEmpty()) {
                 throw new IllegalArgumentException("이메일 정보가 필요합니다.");
             }
 
-            // 이미지 업로드 처리 (S3 또는 다른 저장소 사용)
-            List<String> imageUrls = new ArrayList<>();
-            if (images != null && !images.isEmpty()) {
-                imageUrls = fileUploadService.submitFiles(images);
-            }
-
-            // 상품 엔티티 생성
             ProductEntity productEntity = ProductEntity.builder()
                     .pdtName(productDetailDto.getPdtName())
                     .pdtPrice(productDetailDto.getPdtPrice())
@@ -151,15 +143,24 @@ public class ProductsService {
                     .description(productDetailDto.getDescription())
                     .dtype(productDetailDto.getDtype())
                     .email(email)
-                    .imageUrls(imageUrls)  // 업로드된 이미지 URL 저장 (ProductEntity에 @ElementCollection 추가 필요)
                     .build();
 
-            // 상품 정보 DB 저장
-            productsRepository.save(productEntity);
+            productEntity = productsRepository.save(productEntity);  // ✅ 상품을 먼저 저장하고 pdtId 생성
+            Long pdtId = Long.valueOf(productEntity.getPdtId());
 
-//            // 이미지 업로드 정보 저장
-            for (String imageUrl : imageUrls) {
-                UploadEntity uploadEntity = new UploadEntity(email, Collections.singletonList(imageUrl));
+            if (pdtId == null) {
+                throw new RuntimeException("상품 등록 실패: pdtId가 생성되지 않았습니다.");
+            }
+
+
+            List<String> imageUrls = new ArrayList<>();
+            if (images != null && !images.isEmpty()) {
+                imageUrls = fileUploadService.submitFiles(images);
+            }
+
+
+            if (!imageUrls.isEmpty()) {
+                UploadEntity uploadEntity = new UploadEntity(email, imageUrls);
                 uploadRepository.save(uploadEntity);
             }
 
@@ -167,6 +168,7 @@ public class ProductsService {
             throw new RuntimeException("상품 등록 중 오류 발생: " + e.getMessage());
         }
     }
+
 
 
 
