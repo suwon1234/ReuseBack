@@ -160,7 +160,7 @@ public class ProductsService {
 
 
             if (!imageUrls.isEmpty()) {
-                UploadEntity uploadEntity = new UploadEntity(email, imageUrls);
+                UploadEntity uploadEntity = new UploadEntity(email, imageUrls, Math.toIntExact(pdtId));
                 uploadRepository.save(uploadEntity);
             }
 

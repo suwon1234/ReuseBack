@@ -24,8 +24,9 @@ public class UploadEntity {
     private List<String> imageUrls;
 
     @Builder
-    public UploadEntity(String email, List<String> imageUrls) {
+    public UploadEntity(String email, List<String> imageUrls, Integer pdtId) {
         this.email = email;
+        this.pdtId = pdtId;
         this.imageUrls = imageUrls;
 
     }
