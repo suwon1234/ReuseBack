@@ -60,10 +60,10 @@ public class ProductsController {
 
             // 상품 등록 후 Kafka 메시지 전송
             // Kafka 메시지를 전송하는 createPdt 메서드 호출
-//            String topic = "pdt-create"; // 예시 토픽 이름 (적절히 변경 필요)
-//            System.out.println("카프카 메세지 전송...");
-//            testKafProducer.createPdt(topic, productDetailDto);  // KafkaService에 전달
-//            System.out.println("카프카 메세지 전송완료");
+           String topic = "pdt-create"; // 예시 토픽 이름 (적절히 변경 필요)
+           System.out.println("카프카 메세지 전송...");
+           testKafProducer.createPdt(topic, productDetailDto);  // KafkaService에 전달
+           System.out.println("카프카 메세지 전송완료");
 
             return ResponseEntity.ok("상품이 성공적으로 등록되었습니다.");
         } catch (Exception e) {
