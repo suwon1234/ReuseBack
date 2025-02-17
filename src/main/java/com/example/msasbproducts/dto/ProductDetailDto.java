@@ -29,6 +29,6 @@ public class ProductDetailDto {
         this.description = description;
         this.dtype = dtype;
         this.email = email;
-//        this.imageUrls = imageUrls;
+        this.imageUrls = imageUrls;
     }
 }

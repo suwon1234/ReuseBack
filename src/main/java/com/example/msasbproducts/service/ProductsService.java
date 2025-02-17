@@ -139,6 +139,7 @@ public class ProductsService {
                     .pdtQuantity(productDetailDto.getPdtQuantity())
                     .description(productDetailDto.getDescription())
                     .dtype(productDetailDto.getDtype())
+                    .imageUrls(productDetailDto.getImageUrls())
                     .email(email)
                     .build();
             System.out.println(productEntity.toString());
