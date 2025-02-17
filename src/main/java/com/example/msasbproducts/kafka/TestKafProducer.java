@@ -22,6 +22,7 @@ public class TestKafProducer {
 
     public void createPdt(String topic, ProductDetailDto productDetailDto) throws JsonProcessingException {
         logger.info("상품 등록 메세지 전송");
+        System.out.println(productDetailDto.toString());
         kafkaTemplate.send(topic, objectMapper.writeValueAsString(SendPdtDto.builder()
                         .email(productDetailDto.getEmail())
                         .ptId(productDetailDto.getPdtId())
