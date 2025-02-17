@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-
 @Repository
 public interface CartRepository extends JpaRepository<CartEntity, Integer> {
     // 고객별(email) 장바구니 조회

@@ -3,11 +3,7 @@ package com.example.msasbproducts.controller;
 import com.example.msasbproducts.dto.ProductDetailDto;
 import com.example.msasbproducts.dto.ProductReqDto;
 import com.example.msasbproducts.dto.ShoppingCartReqDto;
-import com.example.msasbproducts.dto.UploadDto;
-import com.example.msasbproducts.entity.UploadEntity;
-import com.example.msasbproducts.kafka.KafkaProducer;
 import com.example.msasbproducts.kafka.TestKafProducer;
-import com.example.msasbproducts.repository.UploadRepository;
 import com.example.msasbproducts.service.FileUpoadService;
 import com.example.msasbproducts.service.ProductsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,28 +36,38 @@ public class ProductsController {
     public ResponseEntity<ProductDetailDto> productDetail(@PathVariable Integer pdtId) {
         return ResponseEntity.ok(productsService.getProductDetailInfo(pdtId));
     }
-    // 상품등록
+
     // 상품등록
     @PostMapping("/register")
     public ResponseEntity<String> registerProductWithImages(
             @RequestHeader("X-Auth-User") String email,
-            @RequestParam(value = "images", required = false) List<MultipartFile> images,
-            @RequestParam("productDetail") String productDetailJson) {  // JSON 데이터를 문자열로 받음
+//            @RequestParam(value = "images", required = false) List<MultipartFile> images,
+            List<MultipartFile> images,
+//            @RequestParam("productDetail") String productDetailJson
+            String productDetailJson
+            ) {  // JSON 데이터를 문자열로 받음
         try {
             // JSON String을 DTO 객체로 변환
             ObjectMapper objectMapper = new ObjectMapper();
+            System.out.println("ObjectMapper read JSON...");
+            System.out.println(productDetailJson);
             ProductDetailDto productDetailDto = objectMapper.readValue(productDetailJson, ProductDetailDto.class);
+            System.out.println("ObjectMapper read");
 
             // 상품 등록 (이미지 포함)
             productsService.registerProductWithImages(email, productDetailDto, images);
+            System.out.println("이미지 업로드 성공");
 
             // 상품 등록 후 Kafka 메시지 전송
             // Kafka 메시지를 전송하는 createPdt 메서드 호출
-            String topic = "pdt-create"; // 예시 토픽 이름 (적절히 변경 필요)
-            testKafProducer.createPdt(topic, productDetailDto);  // KafkaService에 전달
+//            String topic = "pdt-create"; // 예시 토픽 이름 (적절히 변경 필요)
+//            System.out.println("카프카 메세지 전송...");
+//            testKafProducer.createPdt(topic, productDetailDto);  // KafkaService에 전달
+//            System.out.println("카프카 메세지 전송완료");
 
             return ResponseEntity.ok("상품이 성공적으로 등록되었습니다.");
         } catch (Exception e) {
+//            e.printStackTrace();
             return ResponseEntity.status(500).body("상품 등록 실패: " + e.getMessage());
         }
     }
