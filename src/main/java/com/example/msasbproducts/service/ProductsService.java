@@ -149,6 +149,7 @@ public class ProductsService {
             Long pdtId = Long.valueOf(productEntity.getPdtId());
             System.out.println(pdtId);
             System.out.println("제품 정보 저장 완료");
+            productDetailDto.setPdtId(Integer.valueOf(pdtId.toString()));
 
 
             if (pdtId == null) {
