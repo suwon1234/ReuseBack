@@ -160,6 +160,9 @@ public class ProductsService {
             List<String> imageUrls = new ArrayList<>();
             if (images != null && !images.isEmpty()) {
                 imageUrls = fileUploadService.submitFiles(images);
+                productDetailDto.setImageUrls(imageUrls);
+
+
                 productEntity = ProductEntity.builder()
                         .pdtName(productDetailDto.getPdtName())
                         .pdtPrice(productDetailDto.getPdtPrice())
