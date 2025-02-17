@@ -164,6 +164,7 @@ public class ProductsService {
 
 
                 productEntity = ProductEntity.builder()
+                        .pdtId((pdtId.intValue()))
                         .pdtName(productDetailDto.getPdtName())
                         .pdtPrice(productDetailDto.getPdtPrice())
                         .pdtQuantity(productDetailDto.getPdtQuantity())
