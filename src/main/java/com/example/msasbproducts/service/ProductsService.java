@@ -139,7 +139,6 @@ public class ProductsService {
                     .pdtQuantity(productDetailDto.getPdtQuantity())
                     .description(productDetailDto.getDescription())
                     .dtype(productDetailDto.getDtype())
-                    .imageUrls(productDetailDto.getImageUrls())
                     .email(email)
                     .build();
             System.out.println(productEntity.toString());
@@ -161,6 +160,16 @@ public class ProductsService {
             List<String> imageUrls = new ArrayList<>();
             if (images != null && !images.isEmpty()) {
                 imageUrls = fileUploadService.submitFiles(images);
+                productEntity = ProductEntity.builder()
+                        .pdtName(productDetailDto.getPdtName())
+                        .pdtPrice(productDetailDto.getPdtPrice())
+                        .pdtQuantity(productDetailDto.getPdtQuantity())
+                        .description(productDetailDto.getDescription())
+                        .dtype(productDetailDto.getDtype())
+                        .email(email)
+                        .imageUrls(imageUrls)
+                        .build();
+                productEntity = productsRepository.save(productEntity);
             }
             System.out.println("이미지 주소 정보 저장완료");
 
