@@ -63,7 +63,7 @@ public class WishlistService {
     /**
      * 찜 삭제 (예외 처리 포함)
      */
-    public void removeWishlist(Integer pdtId,String email) {
+    public void removeWishlist(Integer pdtId, String email) {
         // pdtId와 email을 기준으로 위시리스트 항목이 존재하는지 확인
         Optional<WishlistEntity> wishlistItem = wishlistRepository.findByPdtIdAndEmail(pdtId, email);
 
@@ -74,5 +74,6 @@ public class WishlistService {
         // 중복된 찜 항목이 있을 경우 삭제
         wishlistRepository.delete(wishlistItem.get());
     }
+
 
 }

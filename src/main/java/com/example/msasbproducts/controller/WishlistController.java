@@ -47,19 +47,23 @@ public class WishlistController {
     }
 
     // 위시리스트에서 항목 제거
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeWishlist(@PathVariable Integer id,
+    @DeleteMapping("/{pdtId}")
+    public ResponseEntity<Void> removeWishlist(@PathVariable Integer pdtId,
                                                @RequestHeader("X-Auth-User") String email) {  // 이메일을 헤더에서 받음
         try {
-            wishlistService.removeWishlist(id,email);
+            wishlistService.removeWishlist(pdtId, email);  // 서비스 메서드 호출
 
             // Kafka 메시지 전송
             String topic = "wish-pdt-delete";  // 적절한 Kafka 토픽 설정
-            testKafProducer.wishPdtDelete(topic, id, email);  // 상품 ID와 이메일을 Kafka producer에 전달
+            testKafProducer.wishPdtDelete(topic, pdtId, email);  // 상품 ID와 이메일을 Kafka producer에 전달
 
             return ResponseEntity.noContent().build();  // 204 No Content 상태 코드
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(null);  // 400 Bad Request 상태 코드
         } catch (Exception e) {
-            return ResponseEntity.status(500).build();  // 서버 오류 발생 시 500 상태 코드
+            return ResponseEntity.status(500).body(null);  // 500 Internal Server Error 상태 코드
         }
     }
+
+
 }
