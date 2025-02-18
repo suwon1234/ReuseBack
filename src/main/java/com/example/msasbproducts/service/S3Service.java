@@ -31,7 +31,7 @@ public class S3Service {
     private AmazonS3 amazonS3;
 
     /* 1. 파일 업로드 */
-    public String upload(AmazonS3 s3Client, String bucketName, String objectKey, MultipartFile multipartFile) throws IOException {
+    public String upload(AmazonS3 s3Client, String bucket, String objectKey, MultipartFile multipartFile) throws IOException {
         // S3 기본 URL 설정
         final String BASE_S3_URL = "https://product-image1.s3.ap-northeast-3.amazonaws.com/";
 
@@ -41,7 +41,7 @@ public class S3Service {
         metadata.setContentType(multipartFile.getContentType()); // 파일 타입 설정
 
         // S3에 업로드
-        s3Client.putObject(bucketName, objectKey, multipartFile.getInputStream(), metadata);
+        s3Client.putObject(bucket, objectKey, multipartFile.getInputStream(), metadata);
 
         // 최종 URL 반환 (BASE_S3_URL이 자동으로 붙도록 설정)
         return formatS3Url(objectKey);

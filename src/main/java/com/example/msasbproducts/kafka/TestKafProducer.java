@@ -29,6 +29,7 @@ public class TestKafProducer {
                         .pdtName(productDetailDto.getPdtName())
                         .price(Float.valueOf(productDetailDto.getPdtPrice()))
                         .imageUrl(productDetailDto.getImageUrls())
+                        .dtype(productDetailDto.getDtype())
                         .build()));
         logger.info("상품 등록 메세지 전송 완료");
     }

@@ -19,12 +19,15 @@ public class SendPdtDto {
 
     private List<String> imageUrl;
 
+    private String dtype;
+
     @Builder
-    public SendPdtDto(String email, long ptId, String pdtName, Float price, List<String> imageUrl) {
+    public SendPdtDto(String email, long ptId, String pdtName, Float price, List<String> imageUrl, String dtype) {
         this.email = email;
         this.pdtId = ptId;
         this.pdtName = pdtName;
         this.price = price;
         this.imageUrl = imageUrl;
+        this.dtype = dtype;
     }
 }
