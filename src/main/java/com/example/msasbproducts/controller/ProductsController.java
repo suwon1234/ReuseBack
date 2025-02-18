@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/pdts")
@@ -33,8 +34,14 @@ public class ProductsController {
 
     // 개별 상품 상세 조회
     @GetMapping("/detail/{pdtId}")
-    public ResponseEntity<ProductDetailDto> productDetail(@PathVariable Integer pdtId) {
-        return ResponseEntity.ok(productsService.getProductDetailInfo(pdtId));
+    public ResponseEntity<?> productDetail(@PathVariable Integer pdtId) {
+        ProductDetailDto product = productsService.getProductDetailInfo(pdtId);
+
+        if (product == null) {
+            return ResponseEntity.status(404).body(Map.of("message", "해당 상품을 찾을 수 없습니다."));
+        }
+
+        return ResponseEntity.ok(product);
     }
 
     // 상품등록
