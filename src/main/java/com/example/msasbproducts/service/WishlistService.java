@@ -63,10 +63,16 @@ public class WishlistService {
     /**
      * 찜 삭제 (예외 처리 포함)
      */
-    public void removeWishlist(Integer Id) {
-        if (!wishlistRepository.existsById(Id)) {
-            throw new IllegalArgumentException("존재하지 않는 찜 ID입니다.");
+    public void removeWishlist(Integer pdtId,String email) {
+        // pdtId와 email을 기준으로 위시리스트 항목이 존재하는지 확인
+        Optional<WishlistEntity> wishlistItem = wishlistRepository.findByPdtIdAndEmail(pdtId, email);
+
+        if (!wishlistItem.isPresent()) {
+            throw new IllegalArgumentException("존재하지 않거나 이미 삭제된 찜 ID입니다.");
         }
-        wishlistRepository.deleteById(Id);
+
+        // 중복된 찜 항목이 있을 경우 삭제
+        wishlistRepository.delete(wishlistItem.get());
     }
+
 }

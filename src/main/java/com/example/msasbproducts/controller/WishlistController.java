@@ -51,7 +51,7 @@ public class WishlistController {
     public ResponseEntity<Void> removeWishlist(@PathVariable Integer id,
                                                @RequestHeader("X-Auth-User") String email) {  // 이메일을 헤더에서 받음
         try {
-            wishlistService.removeWishlist(id);
+            wishlistService.removeWishlist(id,email);
 
             // Kafka 메시지 전송
             String topic = "wish-pdt-delete";  // 적절한 Kafka 토픽 설정

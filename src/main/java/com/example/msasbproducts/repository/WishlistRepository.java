@@ -12,4 +12,6 @@ public interface WishlistRepository extends JpaRepository<WishlistEntity, Intege
     List<WishlistEntity> findByEmail(String email);
 
     Optional<WishlistEntity> findByEmailAndPdtId(String email, Integer pdtId);
+
+    Optional<WishlistEntity> findByPdtIdAndEmail(Integer pdtId, String email);
 }
