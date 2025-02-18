@@ -46,6 +46,7 @@ public class ProductsService {
                 .ptQuantity(productEntity.getPdtQuantity())
                 .description(productEntity.getDescription())
                 .dtype(productEntity.getDtype())
+                .imageUrls(productEntity.getImageUrls())
                 .build();
     }
 
