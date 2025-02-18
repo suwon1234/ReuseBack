@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Slf4j
@@ -29,14 +31,27 @@ public class S3Service {
     private AmazonS3 amazonS3;
 
     /* 1. 파일 업로드 */
-    public String upload(MultipartFile multipartFile, String s3FileName) throws IOException, UnsupportedEncodingException {
+    public String upload(AmazonS3 s3Client, String bucketName, String objectKey, MultipartFile multipartFile) throws IOException {
+        // S3 기본 URL 설정
+        final String BASE_S3_URL = "https://product-image1.s3.ap-northeast-3.amazonaws.com/";
+
         // 메타데이터 생성
-        ObjectMetadata objMeta = new ObjectMetadata();
-        objMeta.setContentLength(multipartFile.getInputStream().available());
-        // putObject(버킷명, 파일명, 파일데이터, 메타데이터)로 S3에 객체 등록
-        amazonS3.putObject(bucket, s3FileName, multipartFile.getInputStream(), objMeta);
-        // 등록된 객체의 url 반환 (decoder: url 안의 한글or특수문자 깨짐 방지)
-        return URLDecoder.decode(amazonS3.getUrl(bucket, s3FileName).toString(), "utf-8");
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(multipartFile.getSize());
+        metadata.setContentType(multipartFile.getContentType()); // 파일 타입 설정
+
+        // S3에 업로드
+        s3Client.putObject(bucketName, objectKey, multipartFile.getInputStream(), metadata);
+
+        // 최종 URL 반환 (BASE_S3_URL이 자동으로 붙도록 설정)
+        return formatS3Url(objectKey);
+    }
+    public String formatS3Url(String objectKey) {
+        if (objectKey == null || objectKey.isEmpty()) {
+            return null;
+        }
+        final String BASE_S3_URL = "https://product-image1.s3.ap-northeast-3.amazonaws.com/";
+        return BASE_S3_URL + URLEncoder.encode(objectKey, StandardCharsets.UTF_8);
     }
 
     /* 2. 파일 삭제 */
