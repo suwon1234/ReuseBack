@@ -47,6 +47,7 @@ public class ProductsService {
                 .description(productEntity.getDescription())
                 .dtype(productEntity.getDtype())
                 .imageUrls(productEntity.getImageUrls())
+                .email(productEntity.getEmail())
                 .build();
     }
 
