@@ -33,7 +33,7 @@ public class S3Service {
     /* 1. 파일 업로드 */
     public String upload(AmazonS3 s3Client, String bucket, String objectKey, MultipartFile multipartFile) throws IOException {
         // S3 기본 URL 설정
-        final String BASE_S3_URL = "https://product-image1.s3.ap-northeast-3.amazonaws.com/";
+        final String BASE_S3_URL = "https://products-bucket1.s3.ap-northeast-3.amazonaws.com/";
 
         // 메타데이터 생성
         ObjectMetadata metadata = new ObjectMetadata();
@@ -50,7 +50,7 @@ public class S3Service {
         if (objectKey == null || objectKey.isEmpty()) {
             return null;
         }
-        final String BASE_S3_URL = "https://product-image1.s3.ap-northeast-3.amazonaws.com/";
+        final String BASE_S3_URL = "https://products-bucket1.s3.ap-northeast-3.amazonaws.com/";
         return BASE_S3_URL + URLEncoder.encode(objectKey, StandardCharsets.UTF_8);
     }
 

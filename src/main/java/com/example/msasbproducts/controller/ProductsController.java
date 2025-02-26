@@ -61,6 +61,13 @@ public class ProductsController {
             ProductDetailDto productDetailDto = objectMapper.readValue(productDetailJson, ProductDetailDto.class);
             System.out.println("ObjectMapper read");
 
+
+            for (MultipartFile image : images) {
+                System.out.println("파일 이름: " + image.getOriginalFilename());
+                System.out.println("파일 크기: " + image.getSize() + " bytes");
+                System.out.println("파일 타입: " + image.getContentType());
+            }
+
             // 상품 등록 (이미지 포함)
             productsService.registerProductWithImages(email, productDetailDto, images);
             System.out.println("이미지 업로드 성공");
