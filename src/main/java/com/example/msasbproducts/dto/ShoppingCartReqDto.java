@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * 통신용 Dto, 장바구니에 제품을 담을때 정보 세팅, 필요시 장바구니 목록 보여주기도 활용 가능
+ * 통신용 Dto, 장바구니에 제품을 담을때 정보 세팅, 필요시 장바구니 목록 보여주기도 활용 가능xxx
  * - 현재는 제품 엔티티와 유사, 제품 DTO와 거의 동일 => 차후 확장 가능성 존재, 구분하기위해서 생성함aasa
  */
 @Data
