@@ -17,7 +17,7 @@ public class FileUpoadService {
     @Autowired
     private S3Service s3Service;  // S3 서비스 객체
 
-    // S3 클라이언트와 버킷 이름을 주입받아야 합니다.
+    // S3 클라이언트와 버킷 이름을 주입받아야 합니다.fdg
     @Autowired
     private AmazonS3 s3Client;
 

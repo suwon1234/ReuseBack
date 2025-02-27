@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * 제품 상세 정보 요청시 데이터를 담는 그릇
- * dasdadasda
+ * dasdadasdaczxczczxc
  */
 @Data
 @NoArgsConstructor
